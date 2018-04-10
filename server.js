@@ -19,22 +19,22 @@ app.use(logger("dev"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// app.use(method("_method"));
-// app.engine("handlebars", exphbs({ defaultLayout: "main" }));
-// app.set("view engine", "handlebars");
+app.use(method("_method"));
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 mongoose.connect("mongodb://localhost/mongoscraper");
 
-// app.get("/", function(req, res) {
-// db.Article.find({}, null, {sort: {created: -1}}, function(err, data) {
-//       if(data.length === 0) {
-//         res.render("placeholder", {message: "Click the scrape button to populate."});
-//       }
-//       else {
-//         res.render("index", {articles: data});
-//       }
-//     })
-//   });
+app.get("/", function(req, res) {
+db.Article.find({}, null, {sort: {created: -1}}, function(err, data) {
+      if(data.length === 0) {
+        res.render("placeholder", {message: "Click the scrape button to populate."});
+      }
+      else {
+        res.render("index", {articles: data});
+      }
+    })
+  });
 
 app.get("/scrape", (req, res) => {
     axios.get("https://www.huffingtonpost.com/section/travel").then(function(response) {
@@ -57,7 +57,7 @@ app.get("/scrape", (req, res) => {
                 });
         });
 
-        res.send("Scrape Complete");
+        res.redirect("/");
     });
 });
 
