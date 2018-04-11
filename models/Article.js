@@ -11,9 +11,14 @@ const ArticleSchema = new Schema({
         type: String,
         required: true
     },
+    imgLink: String,
     note: {
         type: Schema.Types.ObjectId,
         ref: "Note"
+    },
+    read: {
+        type: Boolean,
+        default: false
     }
 });
 

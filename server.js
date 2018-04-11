@@ -23,19 +23,16 @@ app.use(method("_method"));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-mongoose.connect("mongodb://localhost/mongoscraper");
+mongoose.connect("mongodb://localhost/scraper");
 
+//Display handlebars main page
 app.get("/", function(req, res) {
 db.Article.find({}, null, {sort: {created: -1}}, function(err, data) {
-      if(data.length === 0) {
-        res.render("placeholder", {message: "Click the scrape button to populate."});
-      }
-      else {
-        res.render("index", {articles: data});
-      }
+    res.render("index", {articles: data});
     })
   });
 
+//Scrape articles from huffpost and add to db
 app.get("/scrape", (req, res) => {
     axios.get("https://www.huffingtonpost.com/section/travel").then(function(response) {
         var $ = cheerio.load(response.data);
@@ -44,9 +41,21 @@ app.get("/scrape", (req, res) => {
             var result = {};
 
             result.title = $(this).text();
-            result.link = $(this)
+            result.imgLink = $(this)
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .find("img").attr("src");
+            result.link = "https://www.huffingtonpost.com" + $(this)
                 .parent()
                 .attr("href");
+
+
+                console.log("image: "+ result.imgLink)
+
+                console.log("full result: " + result);
 
             db.Article.create(result)
                 .then(function(dbArticle) {
@@ -61,6 +70,7 @@ app.get("/scrape", (req, res) => {
     });
 });
 
+//Grab all articles
 app.get("/articles", (req, res) => {
     db.Article.find({})
         .then((dbArticle) => {
@@ -71,6 +81,17 @@ app.get("/articles", (req, res) => {
         });
 });
 
+//Grab only the saved articles
+app.get("/saved", (req, res) => {
+    db.Article.find({"read": true}, (err, data) => {
+        var hbsObject = {
+            articles: data
+        }
+        res.render("saved", {articles: data});
+    });
+});
+
+//Get an article by its specific ID
 app.get("/articles/:id", (req, res) => {
     db.Artcile.findOne({ _id: req.params.id })
         .populate("note")
@@ -81,6 +102,7 @@ app.get("/articles/:id", (req, res) => {
             res.json(err);
         });
 });
+
 
 app.post("/articles/:id", (req, res) => {
     db.Note.create(req.body)
@@ -93,6 +115,32 @@ app.post("/articles/:id", (req, res) => {
         .catch((err) => {
             res.json(err);
         });
+});
+
+//Save an ID
+app.post("/articles/save/:id", (req, res) => {
+    db.Article.findOneAndUpdate({ "_id": req.params.id }, { "read": true} )
+    .exec((err, doc) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(doc);
+        }
+    });
+});
+
+//Delete an article from saved
+app.post("/articles/delete/:id", (req, res) => {
+    db.Article.findOneAndUpdate({ "_id": req.params.id }, {"read": false} )
+    .exec((err, doc) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(doc);
+        }
+    });
 });
 
 app.listen(PORT, () => {
