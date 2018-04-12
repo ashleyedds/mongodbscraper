@@ -91,30 +91,30 @@ app.get("/saved", (req, res) => {
     });
 });
 
-//Get an article by its specific ID
+//Get an article by its specific ID, populate it with a note
 app.get("/articles/:id", (req, res) => {
-    db.Artcile.findOne({ _id: req.params.id })
-        .populate("note")
-        .then((dbArticle) => {
-            res.json(dbArticle);
-        })
-        .catch((err) => {
-            res.json(err);
-        });
+    db.Article.findOne({ _id: req.params.id })
+    .populate("note")
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
 });
 
-
+//Save a note for an article
 app.post("/articles/:id", (req, res) => {
     db.Note.create(req.body)
-        .then((dbNote) => {
-            return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
-        })
-        .then((dbArticle) => {
-            res.json(dbArticle);
-        })
-        .catch((err) => {
-            res.json(err);
-        });
+    .then(function(dbNote) {
+      return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+    })
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
 });
 
 //Save an ID
