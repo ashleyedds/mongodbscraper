@@ -12,8 +12,6 @@ const db = require("./models");
 
 const PORT = process.env.PORT || 3000;
 
-mongoose.Promise = Promise;
-
 const app = express();
 
 
@@ -22,11 +20,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGOD_URI || "mongodb://localhost/scraper")
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper";
 
-const mDb = mongoose.connection;
-mDb.on('error', error => {
-    console.log('Mongoose error', error);
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI, {
+    useMongoClient: true
 });
 
 app.use(method("_method"));
