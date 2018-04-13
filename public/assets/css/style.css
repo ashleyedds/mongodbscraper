@@ -22,6 +22,11 @@
 
 .nav-link {
     padding: 24px;
+    margin-left: 15px;
+}
+
+.navbar-collapse {
+    background-color: #a8b89e;
 }
 
 .btn-info {
@@ -42,17 +47,18 @@
 }
 
 .jumbo-container {
-    margin-left: 35%;
+   text-align: center;
+   margin-top: 5%;
 }
 
 .display-4 {
     color: #fff;
     font-family: 'Slabo 27px', serif;
     text-shadow:
-   -1px -1px 0 #000,  
+    -1px -1px 0 #000,  
     1px -1px 0 #000,
     -1px 1px 0 #000,
-     1px 1px 0 #000;
+    1px 1px 0 #000;
 }
 
 /* CARDS */
@@ -76,4 +82,22 @@
 .read-btn, .btn-dark, .btn-secondary {
     width: 65%;
     display: block;
+}
+
+/* MODAL */
+.modal-title {
+    font-family: 'Slabo 27px', serif;
+}
+
+.modal-header {
+    background-color: #a8b89e
+}
+
+h5 {
+    font-family: 'Slabo 27px', serif;
+}
+
+label {
+    font-family: 'Slabo 27px', serif;
+
 }

@@ -83,10 +83,13 @@ app.get("/articles", (req, res) => {
 
 //Grab only the saved articles
 app.get("/saved", (req, res) => {
-    db.Article.find({"read": true}, (err, data) => {
+    db.Article.find({"read": true})
+    .populate("note")
+    .then(data => {
         var hbsObject = {
             articles: data
         }
+        console.log("saved data: ", data);
         res.render("saved", {articles: data});
     });
 });

@@ -29,10 +29,20 @@ $(".delete").on("click", function () {
     });
 });
 
+$(".add-note").on("click", function () {
+    var thisId = $(this).attr("data-id");
+    $.ajax({
+        mehtod: "GET",
+        url: "/articles/" + thisId
+    }).done(function (data) {
+        console.log(data.note.body);
+    })
+})
+
 
 $(".save-note").on("click", function () {
     var thisId = $(this).attr("data-id");
-    var noteContent = $("#noteArea").val();
+    var noteContent = $("#noteArea" + thisId).val();
     console.log(noteContent);
     $.ajax({
         method: "POST",
