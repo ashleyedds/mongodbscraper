@@ -12,18 +12,26 @@ const db = require("./models");
 
 const PORT = process.env.PORT || 3000;
 
+mongoose.Promise = Promise;
+
 const app = express();
 
 
 app.use(logger("dev"));
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(express.static("public"));
+
+mongoose.connect(process.env.MONGOD_URI || "mongodb://localhost/scraper")
+
+const mDb = mongoose.connection;
+mDb.on('error', error => {
+    console.log('Mongoose error', error);
+});
 
 app.use(method("_method"));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
-
-mongoose.connect("mongodb://localhost/scraper");
 
 //Display handlebars main page
 app.get("/", function(req, res) {
